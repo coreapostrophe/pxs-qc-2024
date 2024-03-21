@@ -3,15 +3,16 @@ import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
 export enum PageKind {
   home = "home",
+  players = "players",
 }
 export type PageMap = Record<PageKind, ReactNode>;
 
-export interface Context {
+interface Context {
   activePage: PageKind;
   setActivePage: React.Dispatch<React.SetStateAction<PageKind>>;
 }
 
-export const PagesContext = createContext<Context>({
+const PagesContext = createContext<Context>({
   activePage: PageKind.home,
   setActivePage: () => {},
 });
@@ -19,7 +20,7 @@ export const usePages = () => useContext(PagesContext);
 
 export function Pages(props: { pageMap: PageMap }) {
   const { pageMap } = props;
-  const [activePage, setActivePage] = useState(PageKind.home);
+  const [activePage, setActivePage] = useState<PageKind>(PageKind.home);
 
   const contextValue = useMemo(
     () => ({
@@ -31,7 +32,9 @@ export function Pages(props: { pageMap: PageMap }) {
 
   return (
     <PagesContext.Provider value={contextValue}>
-      <Page kind="narrow">{pageMap[activePage]}</Page>
+      <Page kind="narrow" pad={{ vertical: "medium" }}>
+        {pageMap[activePage]}
+      </Page>
     </PagesContext.Provider>
   );
 }
