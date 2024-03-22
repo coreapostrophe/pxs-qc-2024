@@ -11,17 +11,15 @@ import {
 } from "grommet";
 import { PageKind, usePages } from "../hooks/page";
 import { useScores } from "../hooks/score";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { Add, Subtract } from "grommet-icons";
 
 function Home() {
   const { setActivePage } = usePages();
-  const { scores } = useScores();
+  const { scores, setScore } = useScores();
 
   const hasScores = useMemo(() => Object.keys(scores).length > 0, [scores]);
-  const [scoreData, maxScore] = useMemo((): [
-    { name: string; score: number }[],
-    number
-  ] => {
+  const [scoreData, maxScore] = useMemo(() => {
     const data = Object.entries(scores).map(([key, value]) => {
       return { name: key, score: value };
     });
@@ -32,6 +30,13 @@ function Home() {
     return [data, maxScore];
   }, [scores]);
 
+  const handleIncrement = useCallback((player: string) => {
+    setScore(player, (prevScore) => prevScore + 1);
+  }, []);
+  const handleDecrement = useCallback((player: string) => {
+    setScore(player, (prevScore) => prevScore - 1);
+  }, []);
+
   return (
     <PageContent>
       <Heading>Activities</Heading>
@@ -39,7 +44,7 @@ function Home() {
         <AccordionPanel label="Games">
           {hasScores && (
             <DataTable
-              sort={{ direction: "desc", property: "score" }}
+              sortable
               margin={{ bottom: "medium" }}
               columns={[
                 {
@@ -49,6 +54,7 @@ function Home() {
                 },
                 {
                   property: "visual",
+                  sortable: false,
                   render: (datum) => (
                     <Box pad={{ vertical: "xsmall" }}>
                       <Meter
@@ -63,6 +69,27 @@ function Home() {
                 {
                   property: "score",
                   header: "Score",
+                  align: "center",
+                },
+                {
+                  property: "actions",
+                  header: "Actions",
+                  align: "center",
+                  sortable: false,
+                  render: (datum) => (
+                    <Box flex direction="row">
+                      <Button
+                        style={{ padding: "4px 8px" }}
+                        icon={<Subtract />}
+                        onClick={() => handleDecrement(datum.name)}
+                      />
+                      <Button
+                        style={{ padding: "4px 8px" }}
+                        icon={<Add />}
+                        onClick={() => handleIncrement(datum.name)}
+                      />
+                    </Box>
+                  ),
                 },
               ]}
               data={scoreData}

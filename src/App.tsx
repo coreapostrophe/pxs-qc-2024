@@ -15,6 +15,7 @@ import { PageMap, Pages } from "./hooks/page";
 import Home from "./pages/home";
 import { ScoreProvider } from "./hooks/score";
 import Players from "./pages/players";
+import { StorageProvider } from "./hooks/storage";
 
 const pageMap: PageMap = {
   home: <Home />,
@@ -24,9 +25,11 @@ const pageMap: PageMap = {
 function App() {
   return (
     <Grommet full theme={grommet} themeMode="dark">
-      <ScoreProvider>
-        <Pages pageMap={pageMap} />
-      </ScoreProvider>
+      <StorageProvider>
+        <ScoreProvider>
+          <Pages pageMap={pageMap} />
+        </ScoreProvider>
+      </StorageProvider>
     </Grommet>
   );
 }

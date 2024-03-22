@@ -1,4 +1,12 @@
-import { Anchor, Heading, PageContent, Text, TextArea } from "grommet";
+import {
+  Anchor,
+  Box,
+  Button,
+  Heading,
+  PageContent,
+  Text,
+  TextArea,
+} from "grommet";
 import { FormPreviousLink } from "grommet-icons";
 import { PageKind, usePages } from "../hooks/page";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -13,16 +21,15 @@ function Players() {
     setValue(players.join("\n"));
   }, []);
 
-  useEffect(() => {
-    setPlayers(value.split("\n").filter((v) => v));
-  }, [value]);
-
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
       setValue(event.target.value);
     },
     []
   );
+  const handleSave = useCallback(() => {
+    setPlayers(value.split("\n").filter((v) => v));
+  }, [value]);
 
   return (
     <PageContent>
@@ -37,8 +44,16 @@ function Players() {
         value={value}
         resize="vertical"
         onChange={handleChange}
-        style={{ height: "400px" }}
+        style={{ height: "300px" }}
       />
+      <Box>
+        <Button
+          primary
+          margin={{ vertical: "medium" }}
+          label="Save"
+          onClick={handleSave}
+        />
+      </Box>
     </PageContent>
   );
 }
