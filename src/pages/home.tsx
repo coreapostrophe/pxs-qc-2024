@@ -13,6 +13,7 @@ import { PageKind, usePages } from "../hooks/page";
 import { useScores } from "../hooks/score";
 import { useCallback, useEffect, useMemo } from "react";
 import { Add, Subtract } from "grommet-icons";
+import { playSfx } from "../utils/sfx";
 
 function Home() {
   const { setActivePage } = usePages();
@@ -40,7 +41,7 @@ function Home() {
   return (
     <PageContent>
       <Heading>Activities</Heading>
-      <Accordion multiple>
+      <Accordion multiple onActive={() => playSfx()}>
         <AccordionPanel label="Games">
           {hasScores && (
             <DataTable

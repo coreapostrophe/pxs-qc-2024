@@ -1,5 +1,6 @@
 import { Page } from "grommet";
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { playSfx } from "../utils/sfx";
 
 export enum PageKind {
   home = "home",
@@ -11,7 +12,7 @@ export type PageMap = Record<PageKind, ReactNode>;
 
 interface Context {
   activePage: PageKind;
-  setActivePage: React.Dispatch<React.SetStateAction<PageKind>>;
+  setActivePage: (value: PageKind) => void;
 }
 
 const PagesContext = createContext<Context>({
@@ -22,7 +23,12 @@ export const usePages = () => useContext(PagesContext);
 
 export function Pages(props: { pageMap: PageMap }) {
   const { pageMap } = props;
-  const [activePage, setActivePage] = useState<PageKind>(PageKind.home);
+  const [activePage, _setActivePage] = useState<PageKind>(PageKind.home);
+
+  const setActivePage = (value: PageKind) => {
+    playSfx();
+    _setActivePage(value);
+  };
 
   const contextValue = useMemo(
     () => ({
@@ -31,7 +37,6 @@ export function Pages(props: { pageMap: PageMap }) {
     }),
     [activePage, setActivePage]
   );
-
   return (
     <PagesContext.Provider value={contextValue}>
       <Page height="100vh" kind="narrow" pad={{ vertical: "medium" }}>

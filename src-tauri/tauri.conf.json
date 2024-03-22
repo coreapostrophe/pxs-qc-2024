@@ -16,6 +16,9 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "fs": {
+        "scope": ["$RESOURCE/*"]
       }
     },
     "bundle": {
@@ -27,6 +30,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
+      "resources": ["resources/*"],
       "identifier": "com.coreapostrophe.psx-qc-2024",
       "targets": "all",
       "windows": {

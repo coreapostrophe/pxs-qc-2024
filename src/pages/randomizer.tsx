@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { FormPreviousLink } from "grommet-icons";
 import { PageKind, usePages } from "../hooks/page";
 import { useStorage } from "../hooks/storage";
+import { playSfx } from "../utils/sfx";
 
 enum PageState {
   question,
@@ -125,20 +126,22 @@ function Randomizer() {
   const handleStart = useCallback(() => {
     setPageState(PageState.question);
     getQuestion();
+    playSfx();
   }, [getQuestion]);
 
   const handleReset = useCallback(() => {
     setDiscoveredQuestionsData([]);
     setPageState(PageState.start);
+    playSfx();
   }, [handleStart]);
 
   const handleNext = useCallback(() => {
-    console.log(undiscoveredQuestions);
     if (!undiscoveredQuestions.length) {
       setPageState(PageState.finished);
     } else {
       getQuestion();
     }
+    playSfx({ kind: "Whoosh", level: 1 });
   }, [getQuestion, undiscoveredQuestions]);
 
   const contentTemplate = useMemo(() => {
