@@ -16,10 +16,12 @@ import Home from "./pages/home";
 import { ScoreProvider } from "./hooks/score";
 import Players from "./pages/players";
 import { StorageProvider } from "./hooks/storage";
+import Brackets from "./pages/brackets";
 
 const pageMap: PageMap = {
   home: <Home />,
   players: <Players />,
+  brackets: <Brackets />,
 };
 
 function App() {

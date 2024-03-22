@@ -101,7 +101,12 @@ function Home() {
             margin={{ bottom: "medium" }}
             onClick={() => setActivePage(PageKind.players)}
           />
-          <Button primary label="Bracket" margin={{ bottom: "medium" }} />
+          <Button
+            primary
+            label="Bracket"
+            margin={{ bottom: "medium" }}
+            onClick={() => setActivePage(PageKind.brackets)}
+          />
         </AccordionPanel>
         <AccordionPanel label="Hot Discussions">
           <Button primary label="Randomizer" margin={{ bottom: "medium" }} />

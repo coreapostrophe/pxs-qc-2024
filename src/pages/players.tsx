@@ -29,6 +29,7 @@ function Players() {
   );
   const handleSave = useCallback(() => {
     setPlayers(value.split("\n").filter((v) => v));
+    setActivePage(PageKind.home);
   }, [value]);
 
   return (

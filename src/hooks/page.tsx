@@ -4,6 +4,7 @@ import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 export enum PageKind {
   home = "home",
   players = "players",
+  brackets = "brackets",
 }
 export type PageMap = Record<PageKind, ReactNode>;
 
