@@ -109,7 +109,12 @@ function Home() {
           />
         </AccordionPanel>
         <AccordionPanel label="Hot Discussions">
-          <Button primary label="Randomizer" margin={{ bottom: "medium" }} />
+          <Button
+            primary
+            label="Randomizer"
+            margin={{ bottom: "medium" }}
+            onClick={() => setActivePage(PageKind.randomizer)}
+          />
         </AccordionPanel>
       </Accordion>
     </PageContent>

@@ -126,7 +126,12 @@ function Brackets() {
         {winnersBracket}
         <Heading level="2">Losers</Heading>
         {losersBracket}
-        <Button fill margin={{ top: "medium" }} type="reset" label="Reset" />
+        <Button
+          fill="horizontal"
+          margin={{ top: "medium" }}
+          type="reset"
+          label="Reset"
+        />
       </Form>
     </PageContent>
   );

@@ -15,17 +15,23 @@ interface Context {
     key: string,
     successCallback: (value: unknown) => void | PromiseLike<void>
   ) => void;
+  manualSave: () => void;
 }
 
 const StorageContext = createContext<Context>({
   store: { current: null },
   saveData: () => {},
   getData: () => {},
+  manualSave: () => {},
 });
 export const useStorage = () => useContext(StorageContext);
 
 export function StorageProvider(props: PropsWithChildren) {
   const store = useRef(new Store("save.dat"));
+
+  const manualSave = () => {
+    store.current.save().catch((e) => console.error(e));
+  };
 
   const saveData = <T,>(key: string, value: T) => {
     store.current.set(key, value).catch((e) => console.error(e));
@@ -46,8 +52,9 @@ export function StorageProvider(props: PropsWithChildren) {
       store,
       saveData,
       getData,
+      manualSave,
     }),
-    [store, saveData, getData]
+    [store, saveData, getData, manualSave]
   );
 
   return (

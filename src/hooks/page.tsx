@@ -5,6 +5,7 @@ export enum PageKind {
   home = "home",
   players = "players",
   brackets = "brackets",
+  randomizer = "randomizer",
 }
 export type PageMap = Record<PageKind, ReactNode>;
 
@@ -33,7 +34,7 @@ export function Pages(props: { pageMap: PageMap }) {
 
   return (
     <PagesContext.Provider value={contextValue}>
-      <Page kind="narrow" pad={{ vertical: "medium" }}>
+      <Page height="100vh" kind="narrow" pad={{ vertical: "medium" }}>
         {pageMap[activePage]}
       </Page>
     </PagesContext.Provider>
