@@ -18,12 +18,14 @@ import Players from "./pages/players";
 import { StorageProvider } from "./hooks/storage";
 import Brackets from "./pages/brackets";
 import Randomizer from "./pages/randomizer";
+import TeamMaker from "./pages/team-maker";
 
 const pageMap: PageMap = {
   home: <Home />,
   players: <Players />,
   brackets: <Brackets />,
   randomizer: <Randomizer />,
+  teamMaker: <TeamMaker />,
 };
 
 function App() {

@@ -7,6 +7,7 @@ export enum PageKind {
   players = "players",
   brackets = "brackets",
   randomizer = "randomizer",
+  teamMaker = "teamMaker",
 }
 export type PageMap = Record<PageKind, ReactNode>;
 

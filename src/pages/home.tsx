@@ -102,18 +102,29 @@ function Home() {
               data={scoreData}
             />
           )}
-          <Button
-            primary
-            label="Players"
-            margin={{ bottom: "medium" }}
-            onClick={() => setActivePage(PageKind.players)}
-          />
-          <Button
-            primary
-            label="Bracket"
-            margin={{ bottom: "medium" }}
-            onClick={() => setActivePage(PageKind.brackets)}
-          />
+          <Box flex direction="row" justify="evenly" gap="medium">
+            <Button
+              primary
+              fill="horizontal"
+              label="Players"
+              margin={{ bottom: "medium" }}
+              onClick={() => setActivePage(PageKind.players)}
+            />
+            <Button
+              primary
+              fill="horizontal"
+              label="Bracket"
+              margin={{ bottom: "medium" }}
+              onClick={() => setActivePage(PageKind.brackets)}
+            />
+            <Button
+              primary
+              fill="horizontal"
+              label="Team Maker"
+              margin={{ bottom: "medium" }}
+              onClick={() => setActivePage(PageKind.teamMaker)}
+            />
+          </Box>
         </AccordionPanel>
         <AccordionPanel label="Discussions">
           <Button

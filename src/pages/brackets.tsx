@@ -98,7 +98,11 @@ function Brackets() {
     const rowCount = players.length;
     return (
       <Box flex direction="row">
-        {rowCount ? getBracketColumns(rowCount, "winners") : <Text>Empty</Text>}
+        {rowCount ? (
+          getBracketColumns(rowCount, "winners")
+        ) : (
+          <Text color="dark-2">Empty</Text>
+        )}
       </Box>
     );
   }, []);
@@ -107,7 +111,11 @@ function Brackets() {
     const rowCount = players.length;
     return (
       <Box flex direction="row">
-        {rowCount ? getBracketColumns(rowCount, "losers") : <Text>Empty</Text>}
+        {rowCount ? (
+          getBracketColumns(rowCount, "losers")
+        ) : (
+          <Text color="dark-2">Empty</Text>
+        )}
       </Box>
     );
   }, []);
