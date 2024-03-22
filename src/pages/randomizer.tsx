@@ -1,7 +1,6 @@
-import { Anchor, Box, Button, PageContent, Text } from "grommet";
-import Questions from "../assets/questions.json";
-import SampleQuestions from "../assets/sample-questions.json";
+import { Anchor, Box, Button, FileInput, PageContent, Text } from "grommet";
 import {
+  ChangeEvent,
   ForwardedRef,
   forwardRef,
   PropsWithChildren,
@@ -45,9 +44,11 @@ function Question(props: {
 
 function Start(props: {
   hasProgress: boolean;
+  hasQuestions: boolean;
   totalQuestions: number;
   handleStart: () => void;
   handleReset: () => void;
+  handleOnUpload: (event?: ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <>
@@ -60,6 +61,7 @@ function Start(props: {
             margin="xsmall"
             primary
             label="Continue"
+            disabled={!props.hasQuestions}
             onClick={props.handleStart}
           />
           <Button margin="xsmall" label="Reset" onClick={props.handleReset} />
@@ -67,11 +69,13 @@ function Start(props: {
       ) : (
         <Button
           primary
-          margin="xsmall"
           label="Start"
+          disabled={!props.hasQuestions}
+          margin={{ top: "xsmall", bottom: "medium" }}
           onClick={props.handleStart}
         />
       )}
+      <FileInput name="file" multiple={false} onChange={props.handleOnUpload} />
     </>
   );
 }
@@ -128,17 +132,14 @@ function TemporaryConfettiBase(
 }
 
 const TemporaryConfetti = forwardRef(TemporaryConfettiBase);
-const spontaneousQuestionCaption = "Spontaneous Question time!";
+const spontaneousQuestionCaption = "spontaneous question";
 
 function Randomizer() {
-  const appEnvironment = import.meta.env.VITE_APP_ENVIRONMENT;
-  console.log(appEnvironment);
-  const questionsList =
-    appEnvironment === "production" ? Questions : SampleQuestions;
   const [pageState, setPageState] = useState(PageState.start);
-  const [discoveredQuestionsData, setDiscoveredQuestionsData] = useState<
-    string[]
+  const [questionsList, setQuestionsList] = useState<
+    { author: string; data: string }[]
   >([]);
+  const [discoveredQuestions, setDiscoveredQuestions] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState({
     author: "",
     data: "",
@@ -150,28 +151,44 @@ function Randomizer() {
   const undiscoveredQuestions = useMemo(
     () =>
       questionsList.filter((question) => {
-        return !discoveredQuestionsData.includes(question.data);
+        return !discoveredQuestions.includes(question.data);
       }),
-    [questionsList, discoveredQuestionsData]
+    [questionsList, discoveredQuestions]
   );
   const totalQuestions = useMemo(() => questionsList.length, [questionsList]);
+  const hasQuestions = useMemo(() => totalQuestions > 0, [totalQuestions]);
   const hasProgress = useMemo(
-    () => discoveredQuestionsData.length > 0,
-    [discoveredQuestionsData]
+    () => discoveredQuestions.length > 0,
+    [discoveredQuestions]
   );
 
+  console.log(discoveredQuestions);
+  console.log(undiscoveredQuestions);
+  console.log(questionsList);
+
   useEffect(() => {
-    getData("randomizer", (fetchedQuestionsData) => {
-      setDiscoveredQuestionsData(fetchedQuestionsData as string[]);
+    getData("randomizer", (fetchedDiscoveredQuestionsData) => {
+      setDiscoveredQuestions(fetchedDiscoveredQuestionsData as string[]);
+    });
+    getData("questions", (fetchedQuestionsData) => {
+      setQuestionsList(
+        fetchedQuestionsData as { author: string; data: string }[]
+      );
     });
   }, []);
 
   useEffect(() => {
-    saveData("randomizer", discoveredQuestionsData);
-  }, [discoveredQuestionsData]);
+    saveData("randomizer", discoveredQuestions);
+  }, [discoveredQuestions]);
 
   useEffect(() => {
-    if (currentQuestion.data.includes(spontaneousQuestionCaption)) {
+    saveData("questions", questionsList);
+  }, [questionsList]);
+
+  useEffect(() => {
+    if (
+      currentQuestion.data.toLowerCase().includes(spontaneousQuestionCaption)
+    ) {
       playSfx({ kind: "Yay", level: 1, delay: 4000 });
       confetti.current?.showConfetti();
     }
@@ -183,7 +200,7 @@ function Randomizer() {
     );
     const randomQuestion = undiscoveredQuestions[randomIndex];
     setCurrentQuestion(randomQuestion);
-    setDiscoveredQuestionsData((prevState) => {
+    setDiscoveredQuestions((prevState) => {
       const exists = prevState.find(
         (question) => question === randomQuestion.data
       );
@@ -198,7 +215,7 @@ function Randomizer() {
   }, [getQuestion]);
 
   const handleReset = useCallback(() => {
-    setDiscoveredQuestionsData([]);
+    setDiscoveredQuestions([]);
     setPageState(PageState.start);
     playSfx();
   }, [handleStart]);
@@ -211,6 +228,38 @@ function Randomizer() {
     }
     playSfx({ kind: "Whoosh", level: 1, delay: 500 });
   }, [getQuestion, undiscoveredQuestions]);
+
+  const handleOnUpload = useCallback(
+    (event?: ChangeEvent<HTMLInputElement>) => {
+      const file = event?.target.files?.[0] ?? undefined;
+      console.log(file?.name);
+      if (file !== undefined && file.name.includes("csv")) {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function () {
+          if (typeof reader.result === "string") {
+            const csvArray = reader.result.split("\n").map((token) => {
+              const [author = "", data = ""] = token.split(",");
+              return { author, data };
+            });
+            setQuestionsList(csvArray);
+          } else if (!!reader.result) {
+            const decoder = new TextDecoder();
+            const decodedResult = decoder.decode(reader.result);
+            const csvArray = decodedResult.split("\n").map((token) => {
+              const [author, data] = token.split(",");
+              return { author, data };
+            });
+            setQuestionsList(csvArray);
+          }
+        };
+        reader.onerror = function () {
+          console.error(reader.error);
+        };
+      }
+    },
+    []
+  );
 
   const contentTemplate = useMemo(() => {
     switch (pageState) {
@@ -230,6 +279,8 @@ function Randomizer() {
             handleReset={handleReset}
             handleStart={handleStart}
             hasProgress={hasProgress}
+            hasQuestions={hasQuestions}
+            handleOnUpload={handleOnUpload}
             totalQuestions={totalQuestions}
           />
         );

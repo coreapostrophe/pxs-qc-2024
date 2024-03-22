@@ -115,7 +115,7 @@ function Home() {
             onClick={() => setActivePage(PageKind.brackets)}
           />
         </AccordionPanel>
-        <AccordionPanel label="Hot Discussions">
+        <AccordionPanel label="Discussions">
           <Button
             primary
             label="Randomizer"
