@@ -82,12 +82,18 @@ function Home() {
                       <Button
                         style={{ padding: "4px 8px" }}
                         icon={<Subtract />}
-                        onClick={() => handleDecrement(datum.name)}
+                        onClick={() => {
+                          handleDecrement(datum.name);
+                          playSfx({ kind: "Click", level: 2, delay: 500 });
+                        }}
                       />
                       <Button
                         style={{ padding: "4px 8px" }}
                         icon={<Add />}
-                        onClick={() => handleIncrement(datum.name)}
+                        onClick={() => {
+                          handleIncrement(datum.name);
+                          playSfx({ kind: "Click", level: 2, delay: 500 });
+                        }}
                       />
                     </Box>
                   ),

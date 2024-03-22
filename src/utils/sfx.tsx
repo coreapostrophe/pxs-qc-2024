@@ -1,8 +1,11 @@
 import { invoke } from "@tauri-apps/api/tauri";
 
 export function playSfx(
-  options: { kind: string; level: number } = { kind: "Click", level: 1 }
+  options: { kind: string; level: number; delay: number } = {
+    kind: "Click",
+    level: 1,
+    delay: 500,
+  }
 ) {
-  const { kind, level } = options;
-  invoke("play", { kind, level });
+  invoke("play", { options });
 }

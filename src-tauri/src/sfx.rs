@@ -6,7 +6,7 @@ use std::io::BufReader;
 #[derive(serde::Deserialize)]
 pub enum SfxKind {
     Click,
-    Ding,
+    Yay,
     Whoosh,
 }
 
@@ -14,17 +14,24 @@ impl Display for SfxKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let kind_string = match self {
             Self::Click => "click".to_string(),
-            Self::Ding => "ding".to_string(),
+            Self::Yay => "yay".to_string(),
             Self::Whoosh => "whoosh".to_string(),
         };
         write!(f, "{}", kind_string)
     }
 }
 
+#[derive(serde::Deserialize)]
+pub struct PlayOptions {
+    pub kind: SfxKind,
+    pub level: u64,
+    pub delay: u64,
+}
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command(rename_all = "snake_case")]
-pub async fn play(handle: tauri::AppHandle, kind: SfxKind, level: u8) -> Result<(), ()> {
-    let resource_name = format!("resources/{}-{}.mp3", kind, level);
+pub async fn play(handle: tauri::AppHandle, options: PlayOptions) -> Result<(), ()> {
+    let resource_name = format!("resources/{}-{}.mp3", options.kind, options.level);
     println!("{}", resource_name);
     let resource_path = handle
         .path_resolver()
@@ -38,6 +45,6 @@ pub async fn play(handle: tauri::AppHandle, kind: SfxKind, level: u8) -> Result<
         Err(e) => println!("{}", e),
         _ => (),
     };
-    std::thread::sleep(std::time::Duration::from_millis(500));
+    std::thread::sleep(std::time::Duration::from_millis(options.delay));
     Ok(())
 }

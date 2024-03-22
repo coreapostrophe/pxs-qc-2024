@@ -15,6 +15,7 @@ import { useScores } from "../hooks/score";
 import { FormPreviousLink } from "grommet-icons";
 import { PageKind, usePages } from "../hooks/page";
 import { useStorage } from "../hooks/storage";
+import { playSfx } from "../utils/sfx";
 
 function countDivision(num: number, divisor: number): number {
   const quotient = num / divisor;
@@ -131,6 +132,7 @@ function Brackets() {
           margin={{ top: "medium" }}
           type="reset"
           label="Reset"
+          onClick={() => playSfx()}
         />
       </Form>
     </PageContent>

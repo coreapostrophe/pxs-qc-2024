@@ -1,10 +1,23 @@
 import { Anchor, Box, Button, PageContent, Text } from "grommet";
 import Questions from "../assets/questions.json";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import SampleQuestions from "../assets/sample-questions.json";
+import {
+  ForwardedRef,
+  forwardRef,
+  PropsWithChildren,
+  Ref,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FormPreviousLink } from "grommet-icons";
 import { PageKind, usePages } from "../hooks/page";
 import { useStorage } from "../hooks/storage";
 import { playSfx } from "../utils/sfx";
+import ConfettiExplosion, { ConfettiProps } from "react-confetti-explosion";
 
 enum PageState {
   question,
@@ -74,7 +87,54 @@ function Finished(props: { handleReset: () => void }) {
   );
 }
 
+function TemporaryConfettiBase(
+  props: PropsWithChildren,
+  ref: ForwardedRef<{ showConfetti: () => void } | undefined>
+) {
+  const [showComponent, setShowComponent] = useState(false);
+
+  const showConfetti = () => {
+    setShowComponent(true);
+  };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      showConfetti,
+    }),
+    []
+  );
+
+  const handleOnComplete = useCallback(() => {
+    setShowComponent(false);
+  }, []);
+
+  const confettiConfiguration = useMemo<ConfettiProps>(
+    () => ({
+      force: 0.8,
+      duration: 3000,
+      particleCount: 250,
+      width: 1600,
+      onComplete: handleOnComplete,
+    }),
+    []
+  );
+
+  return (
+    <div>
+      {showComponent && <ConfettiExplosion {...confettiConfiguration} />}
+    </div>
+  );
+}
+
+const TemporaryConfetti = forwardRef(TemporaryConfettiBase);
+const spontaneousQuestionCaption = "Spontaneous Question time!";
+
 function Randomizer() {
+  const appEnvironment = import.meta.env.VITE_APP_ENVIRONMENT;
+  console.log(appEnvironment);
+  const questionsList =
+    appEnvironment === "production" ? Questions : SampleQuestions;
   const [pageState, setPageState] = useState(PageState.start);
   const [discoveredQuestionsData, setDiscoveredQuestionsData] = useState<
     string[]
@@ -85,15 +145,16 @@ function Randomizer() {
   });
   const { setActivePage } = usePages();
   const { getData, saveData } = useStorage();
+  const confetti = useRef<{ showConfetti: () => void }>();
 
   const undiscoveredQuestions = useMemo(
     () =>
-      Questions.filter((question) => {
+      questionsList.filter((question) => {
         return !discoveredQuestionsData.includes(question.data);
       }),
-    [Questions, discoveredQuestionsData]
+    [questionsList, discoveredQuestionsData]
   );
-  const totalQuestions = useMemo(() => Questions.length, [Questions]);
+  const totalQuestions = useMemo(() => questionsList.length, [questionsList]);
   const hasProgress = useMemo(
     () => discoveredQuestionsData.length > 0,
     [discoveredQuestionsData]
@@ -108,6 +169,13 @@ function Randomizer() {
   useEffect(() => {
     saveData("randomizer", discoveredQuestionsData);
   }, [discoveredQuestionsData]);
+
+  useEffect(() => {
+    if (currentQuestion.data.includes(spontaneousQuestionCaption)) {
+      playSfx({ kind: "Yay", level: 1, delay: 4000 });
+      confetti.current?.showConfetti();
+    }
+  }, [currentQuestion]);
 
   const getQuestion = useCallback(() => {
     const randomIndex = Math.floor(
@@ -141,7 +209,7 @@ function Randomizer() {
     } else {
       getQuestion();
     }
-    playSfx({ kind: "Whoosh", level: 1 });
+    playSfx({ kind: "Whoosh", level: 1, delay: 500 });
   }, [getQuestion, undiscoveredQuestions]);
 
   const contentTemplate = useMemo(() => {
@@ -177,6 +245,7 @@ function Randomizer() {
           setActivePage(PageKind.home);
         }}
       />
+      <TemporaryConfetti ref={confetti} />
       <Box height="100vh" align="center" justify="center">
         {contentTemplate}
       </Box>
