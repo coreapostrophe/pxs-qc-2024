@@ -1,6 +1,13 @@
-# Tauri + React + Typescript
+# PXS QC 2024
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+This is a windows application made in supplement to a group hangout with friends. It features various functionalities that helps manage the activities within the occassion.  
+
+## Tech Stack
+
+- Rust
+- Tauri
+- React
+- Grommet
 
 ## Recommended IDE Setup
 
