@@ -26,14 +26,15 @@ function PlayerSelect(props: { id: string }) {
   const { id } = props;
   const { players } = useScores();
 
-  const options = useMemo(() => ["None", ...players], [players]);
+  const options = useMemo(() => ["", ...players], [players]);
   return (
     <FormField name={id} htmlFor={`${id}-input`}>
       <Select
         name={id}
         id={`${id}-input`}
         options={options}
-        defaultValue={"None"}
+        defaultValue={""}
+        onChange={() => playSfx()}
       />
     </FormField>
   );
@@ -103,7 +104,7 @@ function Brackets() {
   }, []);
 
   const losersBracket = useMemo(() => {
-    const rowCount = Math.ceil(players.length / 2);
+    const rowCount = players.length;
     return (
       <Box flex direction="row">
         {rowCount ? getBracketColumns(rowCount, "losers") : <Text>Empty</Text>}

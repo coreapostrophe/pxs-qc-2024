@@ -12,3 +12,5 @@ This is a windows application made in supplement to a group hangout with friends
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+
+![Preview](https://github.com/coreapostrophe/pxs-qc-2024/blob/main/preview.png)

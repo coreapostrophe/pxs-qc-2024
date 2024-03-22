@@ -32,7 +32,6 @@ pub struct PlayOptions {
 #[tauri::command(rename_all = "snake_case")]
 pub async fn play(handle: tauri::AppHandle, options: PlayOptions) -> Result<(), ()> {
     let resource_name = format!("resources/{}-{}.mp3", options.kind, options.level);
-    println!("{}", resource_name);
     let resource_path = handle
         .path_resolver()
         .resolve_resource(resource_name)
