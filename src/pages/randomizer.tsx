@@ -52,7 +52,7 @@ function Start(props: {
 }) {
   return (
     <>
-      <Text margin="medium">
+      <Text margin="medium" size="xxlarge">
         There's a total of {props.totalQuestions} questions loaded.
       </Text>
       {props.hasProgress ? (
@@ -76,6 +76,9 @@ function Start(props: {
         />
       )}
       <FileInput name="file" multiple={false} onChange={props.handleOnUpload} />
+      <Text margin={{ vertical: "medium" }} size="medium" color="dark-2">
+        <em>File should be of type .csv with two columns: "author,question"</em>
+      </Text>
     </>
   );
 }
