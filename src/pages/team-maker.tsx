@@ -57,7 +57,9 @@ function TeamMaker() {
     (event: ChangeEvent<HTMLInputElement>) => {
       const parsedValue = parseInt(event.target.value) ?? 1;
       const clampedValueMin = parsedValue < 1 ? 1 : parsedValue;
-      setGroupCount(clampedValueMin);
+      const clampedValueMax =
+        clampedValueMin > players.length ? players.length : clampedValueMin;
+      setGroupCount(clampedValueMax);
     },
     []
   );
