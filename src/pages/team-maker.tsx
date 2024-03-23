@@ -5,7 +5,6 @@ import {
   Card,
   Heading,
   PageContent,
-  Tag,
   Text,
   TextInput,
 } from "grommet";
@@ -22,10 +21,17 @@ function shuffleArray<T>(array: T[]) {
 }
 
 function chunkArray<T>(array: T[], numberOfChunks: number) {
-  const chunkSize = Math.ceil(array.length / numberOfChunks);
-  return [...Array(numberOfChunks)].map((_, index) => {
-    return array.slice(index * chunkSize, (index + 1) * chunkSize);
+  const result: T[][] = [];
+  array.forEach((item, index) => {
+    const group = index % numberOfChunks;
+    const groupExists = Boolean(result?.[group]);
+    if (groupExists) {
+      result[group].push(item);
+    } else {
+      result[group] = [item];
+    }
   });
+  return result;
 }
 
 function TeamMaker() {
@@ -51,11 +57,7 @@ function TeamMaker() {
     (event: ChangeEvent<HTMLInputElement>) => {
       const parsedValue = parseInt(event.target.value) ?? 1;
       const clampedValueMin = parsedValue < 1 ? 1 : parsedValue;
-      const clampedValueMax =
-        clampedValueMin > Math.ceil(players.length / 2)
-          ? Math.ceil(players.length / 2)
-          : clampedValueMin;
-      setGroupCount(clampedValueMax);
+      setGroupCount(clampedValueMin);
     },
     []
   );
@@ -87,15 +89,18 @@ function TeamMaker() {
         <Button label="Make" onClick={handleReshuffle} />
       </Box>
       <Box>
-        <Box flex direction="row-responsive" gap="medium">
+        <Box wrap direction="row-responsive" justify="stretch">
           {Boolean(players.length) ? (
-            groupedPlayers.map((group) => (
-              <Card pad="medium" flex direction="column">
-                {group.map((player) => (
-                  <Box>{player}</Box>
-                ))}
-              </Card>
-            ))
+            groupedPlayers.map(
+              (group) =>
+                Boolean(group.length) && (
+                  <Card pad="medium" margin="small">
+                    {group.map((player) => (
+                      <Box>{player}</Box>
+                    ))}
+                  </Card>
+                )
+            )
           ) : (
             <Box flex>
               <Text textAlign="center" color="dark-2">
